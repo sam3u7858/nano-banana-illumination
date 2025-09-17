@@ -92,18 +92,71 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ originalImage, editedImage,
 
   const handleDownload = () => {
     if (!editedImage) return;
-
-    const link = document.createElement('a');
-    link.href = editedImage;
-    
-    // Extract mime type and determine file extension
-    const mimeType = editedImage.split(';')[0].split(':')[1];
-    const extension = mimeType.split('/')[1] || 'png';
-    
-    link.download = `illuminated-image.${extension}`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.src = editedImage;
+  
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const ctx = canvas.getContext('2d');
+  
+      if (!ctx) return;
+  
+      // Draw the image
+      ctx.drawImage(image, 0, 0);
+  
+      // Watermark properties
+      const watermarkText = 'https://github.com/sam3u7858/nano-banana-illumination';
+      const padding = image.width * 0.01; // 1% padding
+      const fontSize = Math.max(12, image.width * 0.015); // Responsive font size
+      
+      ctx.font = `bold ${fontSize}px "Courier New", monospace`;
+      
+      // Measure text for background
+      const textMetrics = ctx.measureText(watermarkText);
+      const textWidth = textMetrics.width;
+      const textHeight = fontSize;
+  
+      // Draw semi-transparent background for watermark
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      ctx.fillRect(
+          padding, 
+          padding, 
+          textWidth + padding, 
+          textHeight + padding
+      );
+  
+      // Draw watermark text
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.textBaseline = 'top';
+      ctx.fillText(watermarkText, padding * 1.5, padding * 1.5);
+  
+      // Create and trigger download
+      const link = document.createElement('a');
+      const mimeType = editedImage.split(';')[0].split(':')[1] || 'image/png';
+      const extension = mimeType.split('/')[1] || 'png';
+      link.download = `illuminated-image-watermarked.${extension}`;
+      link.href = canvas.toDataURL(mimeType);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+  
+    image.onerror = (err) => {
+        console.error("Failed to load image for watermarking, downloading original.", err);
+        // Fallback to simple download if canvas method fails
+        const link = document.createElement('a');
+        link.href = editedImage;
+        const mimeType = editedImage.split(';')[0].split(':')[1];
+        const extension = mimeType.split('/')[1] || 'png';
+        link.download = `illuminated-image.${extension}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
   };
 
   return (
@@ -146,7 +199,12 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ originalImage, editedImage,
             {isLoading ? (
                 <LoadingSpinner />
             ) : editedImage ? (
-                <img src={editedImage} alt="Edited" className="w-full h-full object-contain rounded-lg" />
+                <div className="relative w-full h-full">
+                    <img src={editedImage} alt="Edited" className="w-full h-full object-contain rounded-lg" />
+                    <div className="absolute top-2 left-2 bg-black/60 text-white/90 text-[10px] sm:text-xs font-mono px-2 py-1 rounded pointer-events-none">
+                        https://github.com/sam3u7858/nano-banana-illumination
+                    </div>
+                </div>
             ) : (
                 <Placeholder text={t('imageDisplay.editedPlaceholder')} />
             )}

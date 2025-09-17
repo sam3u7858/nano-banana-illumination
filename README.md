@@ -1,5 +1,7 @@
 # Nano Banana Illumination
 
+**Live Demo**: [AI Studio App](https://ai.studio/apps/drive/1xe5kL2n2E2D02VwKio2qQVh23KR6KPuW)
+
 A powerful AI-driven photo lighting editor that uses Google's Gemini AI to apply professional lighting presets and exposure corrections to your images.
 
 ![Demo](./assets/demo.png)
@@ -129,7 +131,6 @@ This project is created for educational and demonstration purposes. Please ensur
 
 ## Links
 
-- **Live Demo**: [AI Studio App](https://ai.studio/apps/drive/1xe5kL2n2E2D02VwKio2qQVh23KR6KPuW)
 - **GitHub Repository**: [nano-banana-illumination](https://github.com/sam3u7858/nano-banana-illumination)
 - **Creator**: [@Bmonlive](https://www.youtube.com/@bmonlive)
 - **Website**: [BMon.tw](https://bmon.tw/a)
