@@ -1,0 +1,5 @@
+{
+  "name": "Nano-Banana Illumination",
+  "description": "An intuitive photo editing app that uses AI to apply stunning lighting presets and custom adjustments to your images using the Gemini 'nano-banana' model.",
+  "requestFramePermissions": []
+}
